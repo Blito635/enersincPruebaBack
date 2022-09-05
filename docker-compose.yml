@@ -1,0 +1,48 @@
+version: '3.6'
+
+services:
+  api:
+    build: .
+    depends_on:
+      - db
+    environment:
+      userLocal: postgres
+      passwordLocal: blitoo
+      hostLocal: localhost
+      portLocal: 5432
+      databaseLocal: postgres
+    networks:
+      - default
+    ports:
+      - 5000:5000
+    # volumes:
+    #   - ./server/app:/usr/src/app/app
+    #   - ./server/migrations:/usr/src/app/migrations
+    restart: always
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: blitoo
+      POSTGRES_DB: postgres
+    networks:
+      - default
+    ports:
+      - 5405:5432
+    restart: always
+    volumes:
+      - ./db/init-db/init-db.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db/data:/var/lib/postgresql/data
+
+  dbpg:
+    image: dpage/pgadmin4
+    depends_on:
+      - db
+    environment: 
+      PGADMIN_DEFAULT_EMAIL: nicholas.carreno@cumplimos.co
+      PGADMIN_DEFAULT_PASSWORD: Nik211996
+    networks: 
+      - default
+    ports: 
+      - 8080:80
